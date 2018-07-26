@@ -138,15 +138,19 @@ def write_score():
     farm_turtle.pendown()
     farm_turtle.write("SCORE: " + str(balance), font=("Arial", 48, "normal"), align="center")
     turtle.update()
-    
+
+
 def render():
     """"Renders all plots on the screen."""
     farm_turtle.clear()
     farm_turtle.hideturtle()
     farm_turtle.tracer(0, 0)
-    for plot in self.plots.values():
-        if plot != self.current_plot:
-            self.drawsquare(farm_turtle, plot)
+    global state
+    for row_idx in range(NUM_ROWS):
+        for col_idx in range(NUM_COLS):
+            plot = state[row_idx][col_idx]
+            plot_coords = row_idx, col_idx
+            draw_square(plot, plot_coords)
     drawsquare(farm_turtle, current_plot)
     write_balance()
     write_round()
@@ -201,7 +205,7 @@ def play():
     while round <= 9:
         setup()
         timestep()
-        self.round += 1
+        round += 1
     write_score()
 
 def setup():
