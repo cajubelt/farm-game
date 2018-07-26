@@ -238,3 +238,14 @@ def timestep():
                 state[row_idx][col_idx] = EMPTY_PLOT
     global phase
     phase = "setup"
+
+if __name__ == '__main__':
+    wn = turtle.Screen()
+    wn.bgpic('grass.gif')
+    wn.register_shape('tomato.gif')
+    wn.register_shape('corn.gif')
+    wn.register_shape('eggplant.gif')
+    wn.register_shape('seed.gif')
+    wn.register_shape('money.gif')
+    play()
+    wn.exitonclick()
