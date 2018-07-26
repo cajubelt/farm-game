@@ -122,6 +122,14 @@ class Farm:
     def buy_tomato(self):
         self.buy("tomato")
 
+    def play(self):
+        for round in range(10):
+            print(round+1)
+            self.setup()
+            self.timestep()
+        self.write_score()
+
+
     def setup(self):
         """
         Manual stage of each turn. The blue highlight indicates currently-selected plot.
@@ -136,14 +144,30 @@ class Farm:
             turtle.onkey(self.buy_corn, "c")
             turtle.onkey(self.buy_eggplant, "e")
             turtle.onkey(self.buy_tomato, "t")
-            turtle.onkey(self.timestep, "p")
+            turtle.onkey(self.start_timestep, "p")
             turtle.listen()
 
-    def timestep(self):
+    def start_timestep(self):
         self.state = "timestep"
+
+    def timestep(self):
         for plot in self.plots.values():
-            if plot.texture != None:
-                pass
+            if plot.texture != None and plot.time_remaining > 0:
+                plot.time_remaining -= 1
+            if plot.time_remaining == 0:
+                self.balance += Constants.SELL_PRICE[plot.texture]
+                plot.texture = None
+                plot.time_remaining = None
+        self.state = "setup"
+
+    def write_score(self):
+        self.rt.clear()
+        self.rt.penup()
+        self.rt.goto(0,0)
+        self.rt.pendown()
+        self.rt.write(str(self.balance), font=("Arial", 48, "normal"))
+        turtle.update()
+
 
 if __name__ == '__main__':
     wn = turtle.Screen()
@@ -153,5 +177,5 @@ if __name__ == '__main__':
     wn.register_shape('eggplant.gif')
     wn.register_shape('seed.gif')
     f = Farm()
-    f.setup()
+    f.play()
     wn.exitonclick()
