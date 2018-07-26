@@ -32,7 +32,7 @@ def get_grow_time(type):
     if type == "TOMATO":
         return 3
     elif type == "EGGPLANT":
-        return 150
+        return 4
     elif type == "CORN":
         return 5
     elif type == "EMPTY":
@@ -85,7 +85,7 @@ def decrement_time(plot_tuple):
 # static properties for a farm
 START_PHASE = "setup"
 INITIAL_BALANCE = 500
-NUM_COLS = 8
+NUM_COLS = 6
 NUM_ROWS = 6
 COORD_TUPLE_X_IDX = 0
 COORD_TUPLE_Y_IDX = 1
@@ -128,12 +128,13 @@ def draw_square(plot_tuple, plot_coords):
         farm_turtle.stamp()
 
 def write_balance():
-    x = PLOT_SIZE * NUM_COLS / 2
-    y = PLOT_SIZE * NUM_ROWS / 2
+    balance_msg = "Balance: " + str(balance)
+    x = PLOT_SIZE * (NUM_COLS // 2) - len(balance_msg)*8  # make sure balance msg fits
+    y = PLOT_SIZE * (NUM_ROWS // 2)
     farm_turtle.penup()
     farm_turtle.goto(x,y)
     farm_turtle.pendown()
-    farm_turtle.write(str(balance), font=("Arial", 12, "normal"))
+    farm_turtle.write(balance_msg, font=("Arial", 12, "normal"))
     
 def write_round():
     x = -PLOT_SIZE*NUM_COLS/2
@@ -258,6 +259,8 @@ def timestep():
 
 if __name__ == '__main__':
     wn = turtle.Screen()
+    # wn.setup(width=(PLOT_SIZE*NUM_COLS + 5), height=(PLOT_SIZE*NUM_ROWS + 5))
+    wn.setup(width=(NUM_COLS*PLOT_SIZE + 60), height=(NUM_ROWS*PLOT_SIZE + 60))
     wn.bgpic('grass.gif')
     wn.register_shape('tomato.gif')
     wn.register_shape('corn.gif')
