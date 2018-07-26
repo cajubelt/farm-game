@@ -66,7 +66,6 @@ def get_time_remaining(plot_tuple):
 def get_sell_price(plot_tuple):
     plot_type = plot_tuple[PLOT_TYPE_IDX].upper()
     if plot_type == "TOMATO":
-        print("selling tomato")
         return 300
     elif plot_type == "EGGPLANT":
         return 500
@@ -255,7 +254,6 @@ def timestep():
                 state[row_idx][col_idx] = EMPTY_PLOT
     global phase
     phase = "setup"
-    print("new balance: {}".format(str(balance)))
 
 if __name__ == '__main__':
     wn = turtle.Screen()
