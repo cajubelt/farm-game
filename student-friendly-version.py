@@ -90,8 +90,10 @@ round = 0
 
 def draw_square(plot_tuple, plot_coords):
     farm_turtle.pen({"speed": 0, "pencolor": "white", "pensize": 2, "pendown": False, "shown": False})
-    x = plot_coords[COORD_TUPLE_X_IDX]
-    y = plot_coords[COORD_TUPLE_Y_IDX]
+    x_coord = plot_coords[COORD_TUPLE_X_IDX]
+    x = PLOT_SIZE * (x_coord - NUM_COLS / 2) # changed to turtle frame
+    y_coord = plot_coords[COORD_TUPLE_Y_IDX]
+    y = PLOT_SIZE * (y_coord - NUM_ROWS / 2) # changed to turtle frame
     side = PLOT_SIZE
     if plot_coords==current_plot_xy:
         farm_turtle.pen({"pencolor": "blue", "pensize": 3})
@@ -140,18 +142,20 @@ def write_score():
     turtle.update()
 
 
-def render():
+def render(wn):
     """"Renders all plots on the screen."""
     farm_turtle.clear()
     farm_turtle.hideturtle()
-    farm_turtle.tracer(0, 0)
+    wn.tracer(0, 0)
+    global current_plot_xy
     global state
     for row_idx in range(NUM_ROWS):
         for col_idx in range(NUM_COLS):
             plot = state[row_idx][col_idx]
             plot_coords = row_idx, col_idx
             draw_square(plot, plot_coords)
-    drawsquare(farm_turtle, current_plot)
+    current_plot = state[current_plot_xy[0]][current_plot_xy[1]]
+    draw_square(current_plot, current_plot_xy)
     write_balance()
     write_round()
     turtle.update()
@@ -162,33 +166,29 @@ the keypress.
 """
 def select_up():
     global current_plot_xy
-    if current_plot_xy[COORD_TUPLE_Y_IDX] != Constants.Y_MAXIMUM - 1:
-        current_plot_xy = state[current_plot_xy[COORD_TUPLE_x_IDX]][current_plot_xy[COORD_TUPLE_Y_IDX]+1]
+    current_plot_xy = current_plot_xy[0], min(current_plot_xy[1], NUM_ROWS - 1)
 
 def select_down():
     global current_plot_xy
-    if current_plot_xy[COORD_TUPLE_Y_IDX] != 0:
-        current_plot_xy = state[current_plot_xy[COORD_TUPLE_x_IDX]][current_plot_xy[COORD_TUPLE_Y_IDX]-1]
+    current_plot_xy = current_plot_xy[0], max(current_plot_xy[1],0)
 
 def select_left():
     global current_plot_xy
-    if current_plot_xy[COORD_TUPLE_Y_IDX] != 0:
-        current_plot_xy = state[current_plot_xy[COORD_TUPLE_x_IDX]-1][current_plot_xy[COORD_TUPLE_Y_IDX]]
+    current_plot_xy = max(current_plot_xy[0] - 1, 0), current_plot_xy[1]
 
 def select_right():
     global current_plot_xy
-    if current_plot_xy[COORD_TUPLE_Y_IDX] != Constants.X_MAXIMUM - 1:
-        current_plot_xy = state[current_plot_xy[COORD_TUPLE_x_IDX]+1][current_plot_xy[COORD_TUPLE_Y_IDX]]
+    current_plot_xy = min(current_plot_xy[0] + 1, NUM_COLS-1), current_plot_xy[1]
 
 # buy the current highlighted plot
 def buy(plot_type):
     global current_plot_xy
     global balance
     global state
-    plot = state[current_plot_xy[0], current_plot_xy[1]]
+    plot = state[current_plot_xy[0]][current_plot_xy[1]]
     if balance >= get_buy_price(plot):  # NOTE: allows you to buy / plant over an existing crop
         new_plot = get_new_plot(plot_type)
-        state[current_plot_xy[0], current_plot_xy[1]] = new_plot
+        state[current_plot_xy[0]][current_plot_xy[1]] = new_plot
         balance -= get_buy_price(new_plot)
 
 def buy_corn():
@@ -200,22 +200,22 @@ def buy_eggplant():
 def buy_tomato():
     buy("tomato")
 
-def play():
+def play(wn):
     global round
     while round <= 9:
-        setup()
+        setup(wn)
         timestep()
         round += 1
     write_score()
 
-def setup():
+def setup(wn):
     """
     Manual stage of each turn. The blue highlight indicates currently-selected plot.
     Player-controlled buy/sell transactions occur here.
     """
     global phase
     while phase == 'setup':
-        render()
+        render(wn)
         turtle.onkey(select_up, "Up")
         turtle.onkey(select_down, "Down")
         turtle.onkey(select_left, "Left")
@@ -232,6 +232,7 @@ def start_timestep():
 
 def timestep():
     global state
+    global balance
     for row_idx in range(NUM_ROWS):
         for col_idx in range(NUM_COLS):
             plot = state[row_idx][col_idx]
@@ -251,5 +252,5 @@ if __name__ == '__main__':
     wn.register_shape('eggplant.gif')
     wn.register_shape('seed.gif')
     wn.register_shape('money.gif')
-    play()
+    play(wn)
     wn.exitonclick()
