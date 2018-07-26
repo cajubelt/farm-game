@@ -59,13 +59,13 @@ class Farm:
 
         #Add textures!
         if plot.texture != None:
-            # if plot.time_remaining == 1:
             t.goto(x+side/2, y+side/2)
-            t.shape(plot.texture + ".gif")
+            if plot.time_remaining == 1:
+                t.shape("money.gif")
+            else:
+                t.shape(plot.texture + ".gif")
             t.stamp()
-            # else:
-            #     t.shape("seed.gif")
-            #     t.stamp()
+
 
     def write_balance(self):
         x = Constants.PLOT_SIZE*Constants.X_MAXIMUM/2
@@ -75,6 +75,21 @@ class Farm:
         self.rt.pendown()
         self.rt.write(str(self.balance), font=("Arial", 12, "normal"))
 
+    def write_round(self, round):
+        x = -Constants.PLOT_SIZE*Constants.X_MAXIMUM/2
+        y = Constants.PLOT_SIZE*Constants.Y_MAXIMUM/2
+        self.rt.penup()
+        self.rt.goto(x,y)
+        self.rt.pendown()
+        self.rt.write("Round: " + str(round+1), font=("Arial", 12, "normal"))
+
+    def write_score(self):
+        self.rt.clear()
+        self.rt.penup()
+        self.rt.goto(0,0)
+        self.rt.pendown()
+        self.rt.write("SCORE: " +  str(self.balance), font=("Arial", 48, "normal"), align = "center")
+        turtle.update()
 
     def render(self):
         """"Renders all plots on the screen."""
@@ -125,18 +140,11 @@ class Farm:
         self.buy("tomato")
 
     def play(self):
-        for round in range(10):
+        while self.round <= 9:
             self.setup()
             self.timestep()
+            self.round += 1
         self.write_score()
-
-    def write_round(self, round):
-        x = -Constants.PLOT_SIZE*Constants.X_MAXIMUM/2
-        y = Constants.PLOT_SIZE*Constants.Y_MAXIMUM/2
-        self.rt.penup()
-        self.rt.goto(x,y)
-        self.rt.pendown()
-        self.rt.write("Round: " + str(round+1), font=("Arial", 12, "normal"))
 
     def setup(self):
         """
@@ -168,14 +176,6 @@ class Farm:
                 plot.time_remaining = None
         self.state = "setup"
 
-    def write_score(self):
-        self.rt.clear()
-        self.rt.penup()
-        self.rt.goto(0,0)
-        self.rt.pendown()
-        self.rt.write("SCORE: " +  str(self.balance), font=("Arial", 48, "normal"), align = "center")
-        turtle.update()
-
 
 if __name__ == '__main__':
     wn = turtle.Screen()
@@ -184,6 +184,7 @@ if __name__ == '__main__':
     wn.register_shape('corn.gif')
     wn.register_shape('eggplant.gif')
     wn.register_shape('seed.gif')
+    wn.register_shape('money.gif')
     f = Farm()
     f.play()
     wn.exitonclick()
