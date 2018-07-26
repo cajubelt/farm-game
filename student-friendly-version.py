@@ -11,6 +11,11 @@ plot: a square on the farm grid
  - zeroth entry is type ("EMPTY", "TOMATO", "EGGPLANT", "CORN")
  - first entry is time remaining (integer)
 
+NOTE: the Y1 students dont know the keyword "global", which this makes extensive use of.
+    teaching them global isn't a great solution bc it's generally bad code quality to use
+    so if I don't have time to refactor this before we refer to it, just have students take the global variables as
+        inputs and return the new values as outputs
+
 '''
 import turtle
 
@@ -257,7 +262,6 @@ def timestep():
 
 if __name__ == '__main__':
     wn = turtle.Screen()
-    # wn.setup(width=(PLOT_SIZE*NUM_COLS + 5), height=(PLOT_SIZE*NUM_ROWS + 5))
     wn.setup(width=(NUM_COLS*PLOT_SIZE + 60), height=(NUM_ROWS*PLOT_SIZE + 60))
     wn.bgpic('grass.gif')
     wn.register_shape('tomato.gif')
