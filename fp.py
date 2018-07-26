@@ -34,6 +34,7 @@ class Farm:
         self.plots = {(x, y): Plot(x, y, Constants.PLOT_SIZE) for x in range(Constants.X_MAXIMUM) for y in range(Constants.Y_MAXIMUM)}
         self.current_plot = self.plots[0,0]
         self.rt = turtle.Turtle()
+        self.round = 0
 
     def drawsquare(self, t, plot):
         """
@@ -85,6 +86,7 @@ class Farm:
                 self.drawsquare(self.rt, plot)
         self.drawsquare(self.rt, self.current_plot)
         self.write_balance()
+        self.write_round(self.round)
         turtle.update()
 
     """
@@ -124,11 +126,17 @@ class Farm:
 
     def play(self):
         for round in range(10):
-            print(round+1)
             self.setup()
             self.timestep()
         self.write_score()
 
+    def write_round(self, round):
+        x = -Constants.PLOT_SIZE*Constants.X_MAXIMUM/2
+        y = Constants.PLOT_SIZE*Constants.Y_MAXIMUM/2
+        self.rt.penup()
+        self.rt.goto(x,y)
+        self.rt.pendown()
+        self.rt.write("Round: " + str(round+1), font=("Arial", 12, "normal"))
 
     def setup(self):
         """
@@ -165,7 +173,7 @@ class Farm:
         self.rt.penup()
         self.rt.goto(0,0)
         self.rt.pendown()
-        self.rt.write(str(self.balance), font=("Arial", 48, "normal"))
+        self.rt.write("SCORE: " +  str(self.balance), font=("Arial", 48, "normal"), align = "center")
         turtle.update()
 
 
