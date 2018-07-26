@@ -46,7 +46,7 @@ def get_image(plot_tuple):
     if type == "EMPTY":
         return None
     else:
-        return type + ".gif"
+        return type.lower() + ".gif"
 
 # get the buying price for a plot
 def get_buy_price(plot_tuple):
@@ -58,25 +58,35 @@ def get_buy_price(plot_tuple):
     elif plot_type == "CORN":
         return 250
     else:
-        raise Exception("Cannot get price for plot of type " + plot_type)
+        raise Exception("Cannot get buy price for plot of type " + plot_type)
 
 def get_time_remaining(plot_tuple):
     return plot_tuple[TIME_REMAINING_IDX]
 
 def get_sell_price(plot_tuple):
-    pass # TODO implement
+    plot_type = plot_tuple[PLOT_TYPE_IDX].upper()
+    if plot_type == "TOMATO":
+        print("selling tomato")
+        return 300
+    elif plot_type == "EGGPLANT":
+        return 500
+    elif plot_type == "CORN":
+        return 1000
+    elif plot_type == "EMPTY":
+        return 0
+    else:
+        raise Exception("Cannot get sell price for plot of type " + plot_type)
 
-def get_grow_time(plot_tuple):
-    pass #TODO implement
-
+def decrement_time(plot_tuple):
+    return plot_tuple[0], max(plot_tuple[1] - 1, 0)
 
 ###### Farm pseudo-class
 
 # static properties for a farm
 START_PHASE = "setup"
 INITIAL_BALANCE = 500
-NUM_ROWS = 6
 NUM_COLS = 8
+NUM_ROWS = 6
 COORD_TUPLE_X_IDX = 0
 COORD_TUPLE_Y_IDX = 1
 
@@ -166,11 +176,11 @@ the keypress.
 """
 def select_up():
     global current_plot_xy
-    current_plot_xy = current_plot_xy[0], min(current_plot_xy[1], NUM_ROWS - 1)
+    current_plot_xy = current_plot_xy[0], min(current_plot_xy[1]+1, NUM_COLS - 1)
 
 def select_down():
     global current_plot_xy
-    current_plot_xy = current_plot_xy[0], max(current_plot_xy[1],0)
+    current_plot_xy = current_plot_xy[0], max(current_plot_xy[1]-1,0)
 
 def select_left():
     global current_plot_xy
@@ -178,16 +188,15 @@ def select_left():
 
 def select_right():
     global current_plot_xy
-    current_plot_xy = min(current_plot_xy[0] + 1, NUM_COLS-1), current_plot_xy[1]
+    current_plot_xy = min(current_plot_xy[0] + 1, NUM_ROWS-1), current_plot_xy[1]
 
 # buy the current highlighted plot
 def buy(plot_type):
     global current_plot_xy
     global balance
     global state
-    plot = state[current_plot_xy[0]][current_plot_xy[1]]
-    if balance >= get_buy_price(plot):  # NOTE: allows you to buy / plant over an existing crop
-        new_plot = get_new_plot(plot_type)
+    new_plot = get_new_plot(plot_type)
+    if balance >= get_buy_price(new_plot):  # NOTE: allows you to buy / plant over an existing crop
         state[current_plot_xy[0]][current_plot_xy[1]] = new_plot
         balance -= get_buy_price(new_plot)
 
@@ -226,9 +235,11 @@ def setup(wn):
         turtle.onkey(start_timestep, "p")
         turtle.listen()
 
+
 def start_timestep():
     global phase
     phase = "timestep"
+
 
 def timestep():
     global state
@@ -243,6 +254,7 @@ def timestep():
                 state[row_idx][col_idx] = EMPTY_PLOT
     global phase
     phase = "setup"
+    print("new balance: {}".format(str(balance)))
 
 if __name__ == '__main__':
     wn = turtle.Screen()
