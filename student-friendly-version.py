@@ -147,9 +147,9 @@ def render():
     for plot in self.plots.values():
         if plot != self.current_plot:
             self.drawsquare(farm_turtle, plot)
-    self.drawsquare(farm_turtle, self.current_plot)
-    self.write_balance()
-    self.write_round(round)
+    drawsquare(farm_turtle, current_plot)
+    write_balance()
+    write_round()
     turtle.update()
 
 """
