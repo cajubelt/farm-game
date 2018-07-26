@@ -91,6 +91,17 @@ class Farm:
         self.rt.write("SCORE: " +  str(self.balance), font=("Arial", 48, "normal"), align = "center")
         turtle.update()
 
+    def write_instructions(self):
+        x = -Constants.PLOT_SIZE*(Constants.X_MAXIMUM/2 - 1.5)
+        y = -Constants.PLOT_SIZE*(Constants.Y_MAXIMUM/2 + .75)
+        instruct_turtle = turtle.Turtle()
+        instruct_turtle.hideturtle()
+        instruct_turtle.speed(10)
+        instruct_turtle.penup()
+        instruct_turtle.goto(x,y)
+        instruct_turtle.pendown()
+        instruct_turtle.write("T = Tomato: Buy = 100, Sell = 300, Time = 3\nE = Eggplant: Buy = 150, Sell = 500, Time = 4\nC = Corn: Buy = 250, Sell = 1000, Time = 5\nP = Progress to Next Round", font=("Arial", 10, "normal"), align = "left")
+
     def render(self):
         """"Renders all plots on the screen."""
         self.rt.clear()
@@ -140,6 +151,7 @@ class Farm:
         self.buy("tomato")
 
     def play(self):
+        self.write_instructions()
         while self.round <= 9:
             self.setup()
             self.timestep()
